@@ -328,6 +328,34 @@ h2 {
     gap: 2rem;
 }
 
+.game-controls {
+    display: flex;
+    align-items: center;
+}
+
+.pause-exit-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pause-exit-btn:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+}
+
+.pause-icon {
+    font-size: 1.2rem;
+}
+
 .score-container,
 .lives-container,
 .timer-container {
@@ -400,11 +428,12 @@ h2 {
 }
 
 .movie-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
+    width: auto;
+    max-width: 100%;
+    height: auto;
     border-radius: 4px;
     display: block;
+    margin: 0 auto;
 }
 
 .verdict {
@@ -746,6 +775,80 @@ h2 {
 .modal-close-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 3px 10px rgba(67, 97, 238, 0.4);
+}
+
+/* ----- Pause Menu ----- */
+.pause-menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.menu-btn {
+    background: rgba(25, 25, 35, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-color);
+    padding: 1rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+}
+
+.menu-btn:hover {
+    transform: translateY(-3px);
+    background: rgba(35, 35, 45, 0.8);
+}
+
+.menu-icon {
+    font-size: 1.3rem;
+}
+
+.resume-btn {
+    background: linear-gradient(135deg, rgba(6, 214, 160, 0.2), rgba(6, 214, 160, 0.1));
+    border-color: rgba(6, 214, 160, 0.3);
+}
+
+.resume-btn:hover {
+    background: linear-gradient(135deg, rgba(6, 214, 160, 0.3), rgba(6, 214, 160, 0.2));
+}
+
+.restart-btn {
+    background: linear-gradient(135deg, rgba(76, 201, 240, 0.2), rgba(76, 201, 240, 0.1));
+    border-color: rgba(76, 201, 240, 0.3);
+}
+
+.restart-btn:hover {
+    background: linear-gradient(135deg, rgba(76, 201, 240, 0.3), rgba(76, 201, 240, 0.2));
+}
+
+.exit-btn {
+    background: linear-gradient(135deg, rgba(239, 71, 111, 0.2), rgba(239, 71, 111, 0.1));
+    border-color: rgba(239, 71, 111, 0.3);
+}
+
+.exit-btn:hover {
+    background: linear-gradient(135deg, rgba(239, 71, 111, 0.3), rgba(239, 71, 111, 0.2));
+}
+
+.pause-menu-footer {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.pause-info {
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+#pause-current-score {
+    color: var(--accent-color);
+    font-weight: bold;
 }
 
 /* ----- Animations ----- */

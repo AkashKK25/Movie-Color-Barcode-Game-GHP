@@ -107,7 +107,9 @@ function resetGameState() {
         availableMovies: [],
         gameActive: false,
         totalQuestions: 0,
-        correctAnswers: 0
+        correctAnswers: 0,
+        isPaused: false,
+        pausedAt: null
     };
 }
 
@@ -152,12 +154,23 @@ function setupEventListeners() {
     document.getElementById('how-to-play').addEventListener('click', showHowToPlayModal);
     document.querySelector('.close-modal').addEventListener('click', hideHowToPlayModal);
     document.querySelector('.modal-close-btn').addEventListener('click', hideHowToPlayModal);
+    
+    // Pause/Exit button
+    document.getElementById('pause-exit-btn').addEventListener('click', showPauseMenu);
+    
+    // Pause menu buttons
+    document.getElementById('resume-game-btn').addEventListener('click', resumeGame);
+    document.getElementById('restart-game-btn').addEventListener('click', restartGame);
+    document.getElementById('exit-to-menu-btn').addEventListener('click', exitToMainMenu);
 }
 
 // Initialize categories
 function initializeCategories() {
     const categoryContainer = document.getElementById('category-container');
     categoryContainer.innerHTML = '';
+    
+    // Clear any existing selected categories
+    gameState.selectedCategories = [];
 
     // Get categories from data
     const categories = getCategories();
@@ -165,7 +178,7 @@ function initializeCategories() {
     // Create checkboxes for each category
     categories.forEach(category => {
         const categoryLabel = document.createElement('label');
-        categoryLabel.className = 'category-checkbox';
+        categoryLabel.className = 'category-checkbox selected'; // All categories selected by default
         categoryLabel.dataset.category = category.id;
 
         const checkbox = document.createElement('input');
@@ -179,7 +192,7 @@ function initializeCategories() {
         categoryLabel.appendChild(categoryName);
         categoryContainer.appendChild(categoryLabel);
 
-        // Add to selected categories
+        // Add to selected categories (when initialized, all are selected)
         gameState.selectedCategories.push(category.id);
 
         // Add event listener
@@ -194,12 +207,10 @@ function initializeCategories() {
                 gameState.selectedCategories.splice(index, 1);
                 categoryLabel.classList.remove('selected');
             }
+            
+            // Log the current state for debugging
+            console.log("Selected categories:", gameState.selectedCategories);
         });
-
-        // Set initial selected state
-        if (checkbox.checked) {
-            categoryLabel.classList.add('selected');
-        }
     });
 }
 
@@ -452,6 +463,25 @@ function selectOption(selectedOption) {
         elements.scoreDisplay.textContent = gameState.score;
         elements.verdictDisplay.textContent = 'Correct!';
         elements.verdictDisplay.className = 'verdict correct';
+        
+        // Add bonus time if in Time Attack mode and player got 5 correct answers
+        if (gameState.mode === GAME_MODES.TIME_ATTACK && gameState.correctAnswers % 5 === 0) {
+            gameState.timeLeft += 15; // Add 15 seconds
+            elements.timerDisplay.textContent = gameState.timeLeft;
+            
+            // Show bonus time notification
+            const bonusNotification = document.createElement('div');
+            bonusNotification.className = 'bonus-time-notification';
+            bonusNotification.textContent = '+15 seconds!';
+            document.querySelector('.timer-container').appendChild(bonusNotification);
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                if (bonusNotification.parentNode) {
+                    bonusNotification.parentNode.removeChild(bonusNotification);
+                }
+            }, 2000);
+        }
     } else {
         if (gameState.mode === GAME_MODES.STANDARD) {
             gameState.lives--;
@@ -487,7 +517,7 @@ function selectOption(selectedOption) {
         button.disabled = true;
     });
     
-    // Stop timer if in time attack mode
+    // Pause timer during answer review in Time Attack mode, but don't reset it
     if (gameState.mode === GAME_MODES.TIME_ATTACK) {
         clearInterval(gameState.timer);
     }
@@ -541,10 +571,12 @@ function useHint() {
 
 // Start timer for time attack mode
 function startTimer() {
-    // Reset timer
-    gameState.timeLeft = TIME_ATTACK_SECONDS;
-    elements.timerDisplay.textContent = gameState.timeLeft;
-    elements.timerDisplay.classList.remove('warning', 'danger');
+    // Initialize timer only once when game starts
+    if (gameState.timeLeft === TIME_ATTACK_SECONDS || gameState.timeLeft <= 0) {
+        gameState.timeLeft = TIME_ATTACK_SECONDS;
+        elements.timerDisplay.textContent = gameState.timeLeft;
+        elements.timerDisplay.classList.remove('warning', 'danger');
+    }
     
     // Clear existing timer
     if (gameState.timer) {
@@ -563,8 +595,8 @@ function startTimer() {
         if (gameState.timeLeft <= 0) {
             clearInterval(gameState.timer);
             
-            // Select no option (time's up)
-            timeUp();
+            // End game when time is up
+            endGame();
         }
     }, 1000);
 }
@@ -762,6 +794,81 @@ function showHowToPlayModal() {
 function hideHowToPlayModal() {
     const modal = document.getElementById('how-to-play-modal');
     modal.style.display = 'none';
+}
+
+// Show pause menu
+function showPauseMenu() {
+    // Pause the game
+    gameState.isPaused = true;
+    
+    // If in time attack mode, stop the timer
+    if (gameState.mode === GAME_MODES.TIME_ATTACK && gameState.timer) {
+        clearInterval(gameState.timer);
+    }
+    
+    // Update current score in pause menu
+    document.getElementById('pause-current-score').textContent = gameState.score;
+    
+    // Show the pause menu modal
+    const modal = document.getElementById('pause-menu-modal');
+    modal.style.display = 'block';
+}
+
+// Resume game
+function resumeGame() {
+    // Hide pause menu
+    const modal = document.getElementById('pause-menu-modal');
+    modal.style.display = 'none';
+    
+    // Set game as not paused
+    gameState.isPaused = false;
+    
+    // If in time attack mode, restart the timer
+    if (gameState.mode === GAME_MODES.TIME_ATTACK) {
+        startTimer();
+    }
+}
+
+// Restart game
+function restartGame() {
+    // Hide pause menu
+    const modal = document.getElementById('pause-menu-modal');
+    modal.style.display = 'none';
+    
+    // Reset game state but keep selected options
+    const selectedMode = gameState.mode;
+    const selectedDifficulty = gameState.difficulty;
+    const selectedCategories = [...gameState.selectedCategories];
+    
+    resetGameState();
+    
+    gameState.mode = selectedMode;
+    gameState.difficulty = selectedDifficulty;
+    gameState.selectedCategories = selectedCategories;
+    gameState.gameActive = true;
+    
+    // Update UI
+    updateUIForGameMode();
+    
+    // Load available movies
+    loadAvailableMovies();
+    
+    // Load first question
+    loadQuestion();
+}
+
+// Exit to main menu
+function exitToMainMenu() {
+    // Hide pause menu
+    const modal = document.getElementById('pause-menu-modal');
+    modal.style.display = 'none';
+    
+    // Hide game screen and show welcome screen
+    elements.gameScreen.style.display = 'none';
+    elements.welcomeScreen.style.display = 'flex';
+    
+    // Reset game state
+    resetGameState();
 }
 
 // Utility function to shuffle an array

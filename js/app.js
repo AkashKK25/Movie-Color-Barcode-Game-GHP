@@ -53,11 +53,40 @@ function handleVisibilityChange() {
             // Pause game if it's running
             if (gameState && gameState.timer) {
                 clearInterval(gameState.timer);
+                // Store the timestamp when we paused
+                gameState.pausedAt = Date.now();
             }
         } else {
-            // Resume game if it's in time attack mode
-            if (gameState && gameState.gameActive && gameState.mode === GAME_MODES.TIME_ATTACK) {
-                startTimer();
+            // Resume game if it was active
+            if (gameState && gameState.gameActive && gameState.timer) {
+                // If we have a paused timestamp, adjust for elapsed time
+                if (gameState.pausedAt) {
+                    // Calculate elapsed time in seconds (capped at the timeLeft to avoid negative values)
+                    const elapsedSeconds = Math.min(
+                        Math.floor((Date.now() - gameState.pausedAt) / 1000),
+                        gameState.timeLeft
+                    );
+                    
+                    // Subtract elapsed time
+                    if (gameState.mode === GAME_MODES.TIME_ATTACK) {
+                        gameState.timeLeft = Math.max(0, gameState.timeLeft - elapsedSeconds);
+                        elements.timerDisplay.textContent = gameState.timeLeft;
+                        
+                        // End game if time ran out while away
+                        if (gameState.timeLeft <= 0) {
+                            endGame();
+                            return;
+                        }
+                    }
+                    
+                    // Clear the paused timestamp
+                    gameState.pausedAt = null;
+                }
+                
+                // Restart the timer with the current timeLeft value
+                if (gameState.mode === GAME_MODES.TIME_ATTACK) {
+                    startTimer();
+                }
             }
         }
     });

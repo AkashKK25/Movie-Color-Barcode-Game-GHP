@@ -89,6 +89,11 @@
                     <div class="timer" id="timer">30</div>
                 </div>
             </div>
+            <div class="game-controls">
+                <button id="pause-exit-btn" class="pause-exit-btn">
+                    <span class="pause-icon">⏸️</span> Menu
+                </button>
+            </div>
         </div>
 
         <div id="movie-container" class="movie-container">
@@ -155,7 +160,7 @@
             <h3>Game Modes</h3>
             <ul>
                 <li><strong>Standard:</strong> You have 5 lives. Take your time to identify each movie.</li>
-                <li><strong>Time Attack:</strong> You have 30 seconds to identify each movie. No lives system.</li>
+                <li><strong>Time Attack:</strong> You have 30 seconds total. Get +15 seconds for every 5 correct answers.</li>
                 <li><strong>Endless:</strong> Continue playing until you make a mistake.</li>
             </ul>
             
@@ -170,6 +175,29 @@
             
             <div class="modal-footer">
                 <button class="modal-close-btn">Got it!</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pause Menu Modal -->
+    <div id="pause-menu-modal" class="modal">
+        <div class="modal-content">
+            <h2>Game Paused</h2>
+            
+            <div class="pause-menu-options">
+                <button id="resume-game-btn" class="menu-btn resume-btn">
+                    <span class="menu-icon">▶️</span> Resume Game
+                </button>
+                <button id="restart-game-btn" class="menu-btn restart-btn">
+                    <span class="menu-icon">🔄</span> Restart Game
+                </button>
+                <button id="exit-to-menu-btn" class="menu-btn exit-btn">
+                    <span class="menu-icon">🏠</span> Exit to Main Menu
+                </button>
+            </div>
+            
+            <div class="pause-menu-footer">
+                <p class="pause-info">Current Score: <span id="pause-current-score">0</span></p>
             </div>
         </div>
     </div>

@@ -1,4 +1,16 @@
-/**
+// Exit to main menu
+function exitToMainMenu() {
+    // Hide pause menu
+    const modal = document.getElementById('pause-menu-modal');
+    modal.style.display = 'none';
+    
+    // Hide game screen and show welcome screen
+    elements.gameScreen.style.display = 'none';
+    elements.welcomeScreen.style.display = 'flex';
+    
+    // Reset game state
+    resetGameState();
+}/**
  * Game Engine for Movie Color Barcode Game
  */
 
@@ -109,6 +121,7 @@ function resetGameState() {
         timeLeft: TIME_ATTACK_SECONDS,
         currentMovie: null,
         usedMovies: [],
+        usedMoviesInCurrentGame: [], // Track movies used in current game session
         availableMovies: [],
         gameActive: false,
         totalQuestions: 0,
@@ -130,6 +143,10 @@ function setupEventListeners() {
     // Difficulty selection
     document.getElementById('easy-btn').addEventListener('click', () => selectDifficulty(DIFFICULTY.EASY));
     document.getElementById('hard-btn').addEventListener('click', () => selectDifficulty(DIFFICULTY.HARD));
+    
+    // Category selection buttons
+    document.getElementById('select-all-categories').addEventListener('click', selectAllCategories);
+    document.getElementById('deselect-all-categories').addEventListener('click', deselectAllCategories);
 
     // Start game button
     document.getElementById('start-game-btn').addEventListener('click', startGame);
@@ -383,17 +400,50 @@ function loadQuestion() {
             return;
         }
         
+        // Check if we've used all available movies in this game
+        if (gameState.usedMoviesInCurrentGame && 
+            gameState.usedMoviesInCurrentGame.length >= gameState.availableMovies.length + gameState.usedMovies.length) {
+            // We've shown all available movies, end the game
+            endGame();
+            return;
+        }
+        
         // Reset available movies but keep used ones separate
         loadAvailableMovies();
     }
     
-    // Get a random movie
-    const randomIndex = Math.floor(Math.random() * gameState.availableMovies.length);
-    gameState.currentMovie = gameState.availableMovies[randomIndex];
+    // Get a random movie that hasn't been shown in this game session
+    let randomIndex;
+    let currentMovie;
+    let attempts = 0;
+    const maxAttempts = gameState.availableMovies.length;
+    
+    // Initialize usedMoviesInCurrentGame array if it doesn't exist
+    if (!gameState.usedMoviesInCurrentGame) {
+        gameState.usedMoviesInCurrentGame = [];
+    }
+    
+    do {
+        randomIndex = Math.floor(Math.random() * gameState.availableMovies.length);
+        currentMovie = gameState.availableMovies[randomIndex];
+        attempts++;
+        
+        // If we've tried all available movies and all have been used, break the loop
+        if (attempts >= maxAttempts) {
+            // We'll use this movie even if it's a repeat, better than an infinite loop
+            break;
+        }
+    } while (gameState.usedMoviesInCurrentGame.some(movie => movie.id === currentMovie.id));
+    
+    // Set current movie
+    gameState.currentMovie = currentMovie;
     
     // Remove movie from available movies and add to used movies
     gameState.availableMovies.splice(randomIndex, 1);
-    gameState.usedMovies.push(gameState.currentMovie);
+    gameState.usedMovies.push(currentMovie);
+    
+    // Add to used movies in current game
+    gameState.usedMoviesInCurrentGame.push(currentMovie);
     
     // Increment total questions counter
     gameState.totalQuestions++;
@@ -886,18 +936,51 @@ function restartGame() {
     loadQuestion();
 }
 
-// Exit to main menu
-function exitToMainMenu() {
-    // Hide pause menu
-    const modal = document.getElementById('pause-menu-modal');
-    modal.style.display = 'none';
+// Select all categories
+function selectAllCategories() {
+    // Get all category checkboxes
+    const checkboxes = document.querySelectorAll('.category-checkbox input[type="checkbox"]');
+    const categories = getCategories();
     
-    // Hide game screen and show welcome screen
-    elements.gameScreen.style.display = 'none';
-    elements.welcomeScreen.style.display = 'flex';
+    // Clear selected categories array
+    gameState.selectedCategories = [];
     
-    // Reset game state
-    resetGameState();
+    // Check all checkboxes and add to selected categories
+    checkboxes.forEach(checkbox => {
+        const categoryId = checkbox.value;
+        checkbox.checked = true;
+        gameState.selectedCategories.push(categoryId);
+        
+        // Add selected class to parent label
+        const label = checkbox.closest('.category-checkbox');
+        if (label) {
+            label.classList.add('selected');
+        }
+    });
+    
+    console.log("All categories selected:", gameState.selectedCategories);
+}
+
+// Deselect all categories
+function deselectAllCategories() {
+    // Get all category checkboxes
+    const checkboxes = document.querySelectorAll('.category-checkbox input[type="checkbox"]');
+    
+    // Clear selected categories array
+    gameState.selectedCategories = [];
+    
+    // Uncheck all checkboxes
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+        
+        // Remove selected class from parent label
+        const label = checkbox.closest('.category-checkbox');
+        if (label) {
+            label.classList.remove('selected');
+        }
+    });
+    
+    console.log("All categories deselected");
 }
 
 // Utility function to shuffle an array

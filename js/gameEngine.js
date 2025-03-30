@@ -93,10 +93,15 @@ function initGame() {
 
 // Reset game state
 function resetGameState() {
+    // Save the selected categories before resetting
+    const savedCategories = gameState.selectedCategories ? [...gameState.selectedCategories] : [];
+    const categoriesInitialized = gameState.selectedCategoriesInitialized || false;
+    
     gameState = {
         mode: GAME_MODES.STANDARD,
         difficulty: DIFFICULTY.EASY,
-        selectedCategories: [],
+        selectedCategories: savedCategories, // Preserve the selected categories
+        selectedCategoriesInitialized: categoriesInitialized,
         score: 0,
         lives: MAX_LIVES,
         hintsLeft: MAX_HINTS,
@@ -111,6 +116,8 @@ function resetGameState() {
         isPaused: false,
         pausedAt: null
     };
+    
+    console.log("Game state reset. Selected categories:", gameState.selectedCategories);
 }
 
 // Set up event listeners
@@ -169,8 +176,12 @@ function initializeCategories() {
     const categoryContainer = document.getElementById('category-container');
     categoryContainer.innerHTML = '';
     
-    // Clear any existing selected categories
-    gameState.selectedCategories = [];
+    // Clear any existing selected categories, but only if it's a fresh initialization
+    // Don't clear if we're just updating the UI
+    if (!gameState.selectedCategoriesInitialized) {
+        gameState.selectedCategories = [];
+        gameState.selectedCategoriesInitialized = true;
+    }
 
     // Get categories from data
     const categories = getCategories();
@@ -178,22 +189,31 @@ function initializeCategories() {
     // Create checkboxes for each category
     categories.forEach(category => {
         const categoryLabel = document.createElement('label');
-        categoryLabel.className = 'category-checkbox selected'; // All categories selected by default
+        categoryLabel.className = 'category-checkbox';
         categoryLabel.dataset.category = category.id;
+        
+        // Check if category should be selected (either all for new game or based on existing selection)
+        const isSelected = gameState.selectedCategories.length === 0 || 
+                          gameState.selectedCategories.includes(category.id);
+        
+        if (isSelected) {
+            categoryLabel.classList.add('selected');
+            // Only add to selected categories if not already there
+            if (!gameState.selectedCategories.includes(category.id)) {
+                gameState.selectedCategories.push(category.id);
+            }
+        }
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.value = category.id;
-        checkbox.checked = true; // Default to checked
+        checkbox.checked = isSelected; // Set checked state based on selection status
 
         const categoryName = document.createTextNode(category.name);
 
         categoryLabel.appendChild(checkbox);
         categoryLabel.appendChild(categoryName);
         categoryContainer.appendChild(categoryLabel);
-
-        // Add to selected categories (when initialized, all are selected)
-        gameState.selectedCategories.push(category.id);
 
         // Add event listener
         checkbox.addEventListener('change', function() {
@@ -208,10 +228,11 @@ function initializeCategories() {
                 categoryLabel.classList.remove('selected');
             }
             
-            // Log the current state for debugging
             console.log("Selected categories:", gameState.selectedCategories);
         });
     });
+    
+    console.log("Categories after initialization:", gameState.selectedCategories);
 }
 
 // Select game mode
@@ -583,9 +604,17 @@ function startTimer() {
         clearInterval(gameState.timer);
     }
     
+    // Use a more precise timing method
+    const startTime = Date.now();
+    const initialTimeLeft = gameState.timeLeft;
+    
     // Start new timer
     gameState.timer = setInterval(() => {
-        gameState.timeLeft--;
+        // Calculate elapsed time in seconds
+        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+        gameState.timeLeft = Math.max(0, initialTimeLeft - elapsedSeconds);
+        
+        // Update display
         elements.timerDisplay.textContent = gameState.timeLeft;
         
         // Animate timer when running low
@@ -598,7 +627,7 @@ function startTimer() {
             // End game when time is up
             endGame();
         }
-    }, 1000);
+    }, 250); // Update more frequently for smoother countdown
 }
 
 // Time's up handler

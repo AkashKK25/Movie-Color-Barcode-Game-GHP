@@ -429,8 +429,8 @@ h2 {
 
 .movie-image {
     width: auto;
+    height: 250px; /* Fixed height */
     max-width: 100%;
-    height: auto;
     border-radius: 4px;
     display: block;
     margin: 0 auto;

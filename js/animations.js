@@ -132,6 +132,7 @@ function animateBackground() {
 function animateCountdown(callback) {
     // Create countdown overlay
     const overlay = document.createElement('div');
+    overlay.id = 'countdown-overlay';
     overlay.style.position = 'fixed';
     overlay.style.top = '0';
     overlay.style.left = '0';
@@ -160,9 +161,13 @@ function animateCountdown(callback) {
             overlay.classList.add('animate__animated', 'animate__bounceIn');
             
             // Play tick sound
-            const tickSound = new Audio('assets/sounds/tick.mp3');
-            tickSound.volume = 0.3;
-            tickSound.play().catch(() => {});
+            try {
+                const tickSound = new Audio('assets/sounds/tick.mp3');
+                tickSound.volume = 0.3;
+                tickSound.play().catch(() => {});
+            } catch (error) {
+                console.log('Error playing sound:', error);
+            }
             
             // Remove animation class after animation completes
             setTimeout(() => {
@@ -174,13 +179,22 @@ function animateCountdown(callback) {
             overlay.classList.add('animate__animated', 'animate__bounceIn');
             
             // Play start sound
-            const startSound = new Audio('assets/sounds/start.mp3');
-            startSound.volume = 0.4;
-            startSound.play().catch(() => {});
+            try {
+                const startSound = new Audio('assets/sounds/start.mp3');
+                startSound.volume = 0.4;
+                startSound.play().catch(() => {});
+            } catch (error) {
+                console.log('Error playing sound:', error);
+            }
             
             // Remove overlay after a short delay
             setTimeout(() => {
-                document.body.removeChild(overlay);
+                // Check if the overlay is still in the DOM before removing
+                const overlayElement = document.getElementById('countdown-overlay');
+                if (overlayElement && overlayElement.parentNode) {
+                    overlayElement.parentNode.removeChild(overlayElement);
+                }
+                
                 clearInterval(countdownInterval);
                 
                 // Execute callback function

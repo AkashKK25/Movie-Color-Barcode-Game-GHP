@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinematic Barcode Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="barcode-background"></div>
+    
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen">
+        <div class="container animate__animated animate__fadeIn">
+            <h1 class="glow-text">Cinematic Barcode Challenge</h1>
+            <p class="intro-text">
+                Each movie has its unique color signature - a visual fingerprint that tells its story. 
+                Test your film knowledge by identifying movies from their color barcodes!
+            </p>
+            
+            <div class="game-modes">
+                <h2>Select Game Mode</h2>
+                <div class="mode-buttons">
+                    <button id="standard-mode" class="mode-btn">
+                        <span class="mode-icon">🎬</span>
+                        <span class="mode-name">Standard</span>
+                        <span class="mode-desc">5 lives, no time limit</span>
+                    </button>
+                    <button id="time-attack-mode" class="mode-btn">
+                        <span class="mode-icon">⏱️</span>
+                        <span class="mode-name">Time Attack</span>
+                        <span class="mode-desc">30 seconds per round</span>
+                    </button>
+                    <button id="endless-mode" class="mode-btn">
+                        <span class="mode-icon">∞</span>
+                        <span class="mode-name">Endless</span>
+                        <span class="mode-desc">Keep playing until you miss</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="difficulty-section">
+                <h2>Select Difficulty</h2>
+                <div class="difficulty-buttons">
+                    <button id="easy-btn" class="difficulty-btn selected">
+                        <span class="difficulty-name">Easy</span>
+                        <span class="difficulty-desc">Frame-based color barcodes</span>
+                    </button>
+                    <button id="hard-btn" class="difficulty-btn">
+                        <span class="difficulty-name">Hard</span>
+                        <span class="difficulty-desc">Scene-based color barcodes</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="category-section">
+                <h2>Select Categories</h2>
+                <div class="category-checkboxes" id="category-container">
+                    <!-- Categories will be inserted here via JavaScript -->
+                </div>
+            </div>
+
+            <button id="start-game-btn" class="start-btn pulse-animation">Start Game</button>
+            <div class="credits">Created by Cinema Enthusiast • <a href="#" id="how-to-play">How to Play</a></div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen" style="display: none;">
+        <div class="game-header">
+            <div class="game-info">
+                <div class="game-mode-display" id="game-mode-display">Standard Mode</div>
+                <div class="game-difficulty" id="game-difficulty">Easy</div>
+            </div>
+            <div class="game-stats">
+                <div class="score-container">
+                    <div class="score-icon">🏆</div>
+                    <div class="score" id="score">0</div>
+                </div>
+                <div class="lives-container" id="lives-container">
+                    <div class="lives-icon">❤️</div>
+                    <div class="lives" id="lives">5</div>
+                </div>
+                <div class="timer-container" id="timer-container" style="display: none;">
+                    <div class="timer-icon">⏱️</div>
+                    <div class="timer" id="timer">30</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="movie-container" class="movie-container">
+            <div class="barcode-frame">
+                <img id="movie-image" class="movie-image" src="" alt="Movie Color Barcode">
+            </div>
+        </div>
+
+        <div id="verdict" class="verdict"></div>
+        
+        <div id="options-container" class="options-container">
+            <!-- Options will be inserted here via JavaScript -->
+        </div>
+
+        <div class="game-footer">
+            <button id="hint-btn" class="hint-btn">Use Hint</button>
+            <div class="hints-left" id="hints-left">3 Hints Left</div>
+            <button id="next-button" class="next-btn">Next</button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over" class="screen" style="display: none;">
+        <div class="container animate__animated animate__bounceIn">
+            <h2 class="game-over-title">Game Over!</h2>
+            
+            <div class="results-container">
+                <div class="result-item">
+                    <div class="result-label">Final Score</div>
+                    <div class="result-value" id="final-score">0</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Correct Answers</div>
+                    <div class="result-value" id="correct-answers">0</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Accuracy</div>
+                    <div class="result-value" id="accuracy">0%</div>
+                </div>
+            </div>
+
+            <div class="high-scores">
+                <h3>High Scores</h3>
+                <div id="high-scores-list" class="high-scores-list">
+                    <!-- High scores will be inserted here via JavaScript -->
+                </div>
+            </div>
+
+            <div class="game-over-buttons">
+                <button id="play-again" class="play-again-btn">Play Again</button>
+                <button id="back-to-home" class="back-btn">Back to Home</button>
+                <button id="share-results" class="share-btn">Share Results</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div id="how-to-play-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>How to Play</h2>
+            <p>Movie Color Barcodes are visual representations of films where each vertical line represents the dominant colors of frames arranged chronologically from left to right.</p>
+            
+            <h3>Game Modes</h3>
+            <ul>
+                <li><strong>Standard:</strong> You have 5 lives. Take your time to identify each movie.</li>
+                <li><strong>Time Attack:</strong> You have 30 seconds to identify each movie. No lives system.</li>
+                <li><strong>Endless:</strong> Continue playing until you make a mistake.</li>
+            </ul>
+            
+            <h3>Difficulty Levels</h3>
+            <ul>
+                <li><strong>Easy:</strong> Frame-based barcodes with more detailed color patterns.</li>
+                <li><strong>Hard:</strong> Scene-based barcodes with simplified color schemes.</li>
+            </ul>
+            
+            <h3>Hints</h3>
+            <p>You have 3 hints per game. A hint will eliminate two incorrect options.</p>
+            
+            <div class="modal-footer">
+                <button class="modal-close-btn">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load data files first -->
+    <script src="data/categories.js"></script>
+    <script src="data/easy.js"></script>
+    <script src="data/hard.js"></script>
+    
+    <!-- Then load game logic -->
+    <script src="js/animations.js"></script>
+    <script src="js/gameEngine.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

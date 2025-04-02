@@ -60,7 +60,7 @@ A web-based game that challenges movie enthusiasts to identify films based on th
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/AkashKK25/movei-color-barcode-game-ghp.git
+   git clone https://github.com/AkashKK25/movie-color-barcode-game-ghp.git
    cd cinematic-barcode-challenge
    ```
 

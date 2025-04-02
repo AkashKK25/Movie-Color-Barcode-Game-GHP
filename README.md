@@ -3,9 +3,13 @@
 ![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
 
 ![Website Home](assets/images/WebHome.png)
-![Website Gameplay](assets/images/WebGame.png)
+
 
 A web-based game that challenges movie enthusiasts to identify films based on their color barcodes - a visual representation of movie scenes compressed into vertical color strips arranged chronologically.
+
+![Website Gameplay](assets/images/WebGame.png)
+
+## What is a Movie Color Barcode?
 
 ![MCB Explanation](assets/images/MCBMMFR_exampleT.png)
 

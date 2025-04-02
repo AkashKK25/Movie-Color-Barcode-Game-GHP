@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinematic Barcode Challenge</title>
+    <title>Movie Color Barcode Challenge</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
 </head>
 <body>
     <div class="barcode-background"></div>
@@ -15,9 +15,9 @@
     <!-- Welcome Screen -->
     <div id="welcome-screen" class="screen">
         <div class="container animate__animated animate__fadeIn">
-            <h1 class="glow-text">Cinematic Barcode Challenge</h1>
+            <h1 class="glow-text">Movie Color Barcode Challenge</h1>
             <p class="intro-text">
-                Each movie has its unique color signature - a visual fingerprint that tells its story. 
+                Each movie has its unique color signature - a Color Barcode.<br>
                 Test your film knowledge by identifying movies from their color barcodes!
             </p>
             
@@ -32,7 +32,7 @@
                     <button id="time-attack-mode" class="mode-btn">
                         <span class="mode-icon">⏱️</span>
                         <span class="mode-name">Time Attack</span>
-                        <span class="mode-desc">30 seconds per round</span>
+                        <span class="mode-desc">Answer as many as you can in 30 seconds</span>
                     </button>
                     <button id="endless-mode" class="mode-btn">
                         <span class="mode-icon">∞</span>
@@ -68,7 +68,7 @@
             </div>
 
             <button id="start-game-btn" class="start-btn pulse-animation">Start Game</button>
-            <div class="credits">Created by Cinema Enthusiast • <a href="#" id="how-to-play">How to Play</a></div>
+            <div class="credits">Created by <a href="https://AkashKK25.github.io/SDE-Portfolio" target="_blank">Akash Kondaparthi</a> • <a href="#" id="how-to-play">How to Play</a></div>
         </div>
     </div>
 
@@ -95,7 +95,7 @@
             </div>
             <div class="game-controls">
                 <button id="pause-exit-btn" class="pause-exit-btn">
-                    <span class="pause-icon">⏸️</span> Menu
+                    <span class="pause-icon">⏸️</span> <span style="font-family: 'Montserrat', sans-serif;">Menu</span>
                 </button>
             </div>
         </div>
@@ -160,6 +160,8 @@
             <span class="close-modal">&times;</span>
             <h2>How to Play</h2>
             <p>Movie Color Barcodes are visual representations of films where each vertical line represents the dominant colors of frames arranged chronologically from left to right.</p>
+            <p>Take a look at the example below: Movie Color Barcode of <b>Mad Max: Fury Road</b></p>
+            <img src="assets/images/MCBMMFR_exampleT.png" style="width: 100%;">
             
             <h3>Game Modes</h3>
             <ul>
@@ -190,13 +192,13 @@
             
             <div class="pause-menu-options">
                 <button id="resume-game-btn" class="menu-btn resume-btn">
-                    <span class="menu-icon">▶️</span> Resume Game
+                    <span class="menu-icon">▶️</span> <span style="font-family: 'Montserrat', sans-serif;">Resume Game</span>
                 </button>
                 <button id="restart-game-btn" class="menu-btn restart-btn">
-                    <span class="menu-icon">🔄</span> Restart Game
+                    <span class="menu-icon">🔄</span> <span style="font-family: 'Montserrat', sans-serif;">Restart Game</span>
                 </button>
                 <button id="exit-to-menu-btn" class="menu-btn exit-btn">
-                    <span class="menu-icon">🏠</span> Exit to Main Menu
+                    <span class="menu-icon">🏠</span> <span style="font-family: 'Montserrat', sans-serif;">Exit to Main Menu</span>
                 </button>
             </div>
             

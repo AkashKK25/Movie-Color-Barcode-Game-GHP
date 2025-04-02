@@ -1,3 +1,7 @@
+/**
+ * Game Engine for Movie Color Barcode Game
+ */
+
 // Exit to main menu
 function exitToMainMenu() {
     // Hide pause menu
@@ -10,9 +14,7 @@ function exitToMainMenu() {
     
     // Reset game state
     resetGameState();
-}/**
- * Game Engine for Movie Color Barcode Game
- */
+}
 
 // Game constants
 const GAME_MODES = {
@@ -378,10 +380,41 @@ function updateUIForGameMode() {
 function loadAvailableMovies() {
     const allMovies = gameState.difficulty === DIFFICULTY.EASY ? easyMovies : hardMovies;
     
+    // If no categories are selected, show an error message
+    if (gameState.selectedCategories.length === 0) {
+        alert('Please select at least one movie category.');
+        elements.gameScreen.style.display = 'none';
+        elements.welcomeScreen.style.display = 'flex';
+        return;
+    }
+    
+    // Check if all categories are selected (compare with total categories)
+    const allCategoriesSelected = gameState.selectedCategories.length === categories.length;
+    
     // Filter movies by selected categories
-    gameState.availableMovies = allMovies.filter(movie => 
-        gameState.selectedCategories.includes(movie.category)
-    );
+    gameState.availableMovies = allMovies.filter(movie => {
+        // If all categories are selected, include all movies
+        if (allCategoriesSelected) {
+            return true;
+        }
+        
+        // Support both legacy single category and new array of categories
+        if (Array.isArray(movie.categories)) {
+            // Check if any of the movie's categories are in selected categories
+            return movie.categories.some(cat => gameState.selectedCategories.includes(cat));
+        } else if (movie.category) {
+            // For backward compatibility with single category
+            return gameState.selectedCategories.includes(movie.category);
+        }
+        return false;
+    });
+    
+    // Safety check: If no movies match the filter criteria but categories are selected,
+    // include all movies as a fallback
+    if (gameState.availableMovies.length === 0 && gameState.selectedCategories.length > 0) {
+        console.log('No movies match the selected categories. Using all movies as fallback.');
+        gameState.availableMovies = allMovies;
+    }
     
     // Shuffle movies
     shuffleArray(gameState.availableMovies);
@@ -827,7 +860,7 @@ function displayHighScores() {
 
 // Share results
 function shareResults() {
-    const text = `I scored ${gameState.score} points in Cinematic Barcode Challenge! Can you beat my score?`;
+    const text = `I scored ${gameState.score} points in Movie Color Barcode Challenge! Can you beat my score?`;
     
     // Check if Web Share API is available
     if (navigator.share) {

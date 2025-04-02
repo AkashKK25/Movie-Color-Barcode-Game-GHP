@@ -169,7 +169,7 @@ function showLoadingScreen() {
 
     // Create loading title
     const loadingTitle = document.createElement('h1');
-    loadingTitle.textContent = 'Cinematic Barcode Challenge';
+    loadingTitle.textContent = 'Movie Color Barcode Challenge';
     loadingTitle.className = 'glow-text';
     loadingTitle.style.marginBottom = '2rem';
     loadingOverlay.appendChild(loadingTitle);
